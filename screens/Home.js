@@ -1,19 +1,15 @@
-import { useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Button, StyleSheet } from "react-native";
 import config from "../config";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 
 function handleBankLink() {
   url = config.baseUrl + "/bank/link";
-  fetch(
-    url,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((response) => {
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
     if (response.status == 200) {
       response.json().then((data) => {
         Linking.openURL(data.url);
@@ -29,8 +25,8 @@ export default function HomeScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Button title="Connect Bank" onPress={() => handleBankLink()}/>
-      <Button title="Logout" onPress={() => setLoggedIn(false)}/>
+      <Button title="Connect Bank" onPress={() => handleBankLink()} />
+      <Button title="Logout" onPress={() => setLoggedIn(false)} />
     </View>
   );
 }

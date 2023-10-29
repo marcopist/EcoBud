@@ -1,3 +1,3 @@
 export default {
-    baseUrl: "https://ecobud-server-dev-fchhyuauoq-od.a.run.app",
+    baseUrl: "http://localhost:8001",
 }

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import LoginScreen from "./screens/Login";
-import HomeScreen from "./screens/Home";
+import MainApp from "./screens/MainNavigator";
 
 const App = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
-  Screen = isLoggedIn ? HomeScreen : LoginScreen
+  Screen = isLoggedIn ? MainApp : LoginScreen
   return (
     <View style={styles.container}>
       <Screen setLoggedIn={setLoggedIn}/>
