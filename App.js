@@ -1,24 +1,22 @@
+// App.js
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import LoginScreen from "./screens/Login";
-import MainApp from "./screens/MainNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import AuthNavigator from "./navigators/AuthNavigator";
+import MainAppNavigator from "./navigators/MainAppNavigator";
 
 const App = () => {
+  // Destructure the array returned by useState
   const [isLoggedIn, setLoggedIn] = useState(false);
-  Screen = isLoggedIn ? MainApp : LoginScreen
+
   return (
-    <View style={styles.container}>
-      <Screen setLoggedIn={setLoggedIn}/>
-    </View>
+    <NavigationContainer>
+      {isLoggedIn ? (
+        <MainAppNavigator setLoggedIn={setLoggedIn}/>
+      ) : (
+        <AuthNavigator setLoggedIn={setLoggedIn} />
+      )}
+    </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default App;

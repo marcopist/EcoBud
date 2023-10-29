@@ -1,6 +1,6 @@
-import { View, Button, StyleSheet } from "react-native";
+// Home.js
+import { View, Button, StyleSheet, Linking } from "react-native";
 import config from "../config";
-import * as Linking from "expo-linking";
 
 function handleBankLink() {
   url = config.baseUrl + "/bank/link";
@@ -12,10 +12,28 @@ function handleBankLink() {
   }).then((response) => {
     if (response.status == 200) {
       response.json().then((data) => {
+        console.log(data.url)
         Linking.openURL(data.url);
       });
     } else {
       throw new Error("Bank link failed");
+    }
+  });
+}
+
+function handleLogOut(setLoggedIn) {
+  url = config.baseUrl + "/logout";
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (response.status == 200) {
+      console.log("Logged out");
+      setLoggedIn(false);
+    } else {
+      throw new Error("Logout failed");
     }
   });
 }
@@ -25,8 +43,9 @@ export default function HomeScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Button title="Connect Bank" onPress={() => handleBankLink()} />
-      <Button title="Logout" onPress={() => setLoggedIn(false)} />
+      <Button title="Transactions" onPress={() => props.navigation.navigate("Transactions")} />
+      <Button title="Connect Bank" onPress={handleBankLink} />
+      <Button title="Logout" onPress={() => handleLogOut(setLoggedIn)} />
     </View>
   );
 }

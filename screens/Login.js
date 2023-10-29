@@ -1,8 +1,15 @@
+// Login.js
 import { View, Text, Button, StyleSheet, TextInput } from "react-native";
 import React, { useState } from "react";
 import config from "../config";
 
-function handleLogin(username, password, setLoggedIn, setWrongPassword) {
+function handleLogin(
+  username,
+  password,
+  setWrongPassword,
+  navigation,
+  setLoggedIn
+) {
   url = config.baseUrl + "/login";
   fetch(url, {
     method: "POST",
@@ -12,7 +19,8 @@ function handleLogin(username, password, setLoggedIn, setWrongPassword) {
     body: JSON.stringify({ username: username, password: password }),
   }).then((response) => {
     if (response.status == 200) {
-      setLoggedIn(true);
+      setLoggedIn(true); // Use setLoggedIn to update the state
+      navigation.navigate("Home");
     } else {
       setWrongPassword(true);
       throw new Error("Login failed");
@@ -20,36 +28,44 @@ function handleLogin(username, password, setLoggedIn, setWrongPassword) {
   });
 }
 
-export default function LoginScreen(props) {
-  const setLoggedIn = props.setLoggedIn;
+function LoginScreen(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [wrongPassword, setWrongPassword] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text>Login</Text>
-      {wrongPassword && <Text >Wrong username or password</Text>}
+      <Text style={styles.title}>Hi!</Text>
+      {wrongPassword && <Text style={styles.error}>Wrong username or password</Text>}
       <TextInput
+        style={styles.input}
         placeholder="Username"
         onChangeText={setUsername}
         autoComplete="off"
         autoCorrect={false}
         autoCapitalize="none"
-        width={300}
-        textAlign="center"
       />
       <TextInput
+        style={styles.input}
         placeholder="Password"
         onChangeText={setPassword}
         secureTextEntry={true}
         autoComplete="off"
         autoCorrect={false}
         autoCapitalize="none"
-        width={300}
-        textAlign="center"
       />
-      <Button title="Login" onPress={() => handleLogin(username, password, setLoggedIn, setWrongPassword)} />
+      <Button
+        title="Go"
+        onPress={() =>
+          handleLogin(
+            username,
+            password,
+            setWrongPassword,
+            props.navigation,
+            props.setLoggedIn
+          )
+        }
+      />
     </View>
   );
 }
@@ -59,6 +75,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 5,
+    padding: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  error: {
+    color: "red",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 5,
   },
 });
+
+export default LoginScreen;
