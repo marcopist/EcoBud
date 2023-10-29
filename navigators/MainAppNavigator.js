@@ -10,7 +10,8 @@ const MainAppNavigator = ({ setLoggedIn }) => (
   <MainStack.Navigator>
     <MainStack.Screen
       name="Home"
-      component={(props) => <HomeScreen {...props} setLoggedIn={setLoggedIn} />}
+      component={HomeScreen}
+      initialParams={{ setLoggedIn: setLoggedIn }}
     />
     <MainStack.Screen name="Transactions" component={TransactionsListScreen} />
   </MainStack.Navigator>

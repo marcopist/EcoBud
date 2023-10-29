@@ -7,7 +7,6 @@ function handleLogin(
   username,
   password,
   setWrongPassword,
-  navigation,
   setLoggedIn
 ) {
   url = config.baseUrl + "/login";
@@ -20,7 +19,6 @@ function handleLogin(
   }).then((response) => {
     if (response.status == 200) {
       setLoggedIn(true); // Use setLoggedIn to update the state
-      navigation.navigate("Home");
     } else {
       setWrongPassword(true);
       throw new Error("Login failed");
@@ -28,15 +26,18 @@ function handleLogin(
   });
 }
 
-function LoginScreen(props) {
+function LoginScreen({ route, navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [wrongPassword, setWrongPassword] = useState(false);
+  const setLoggedIn = route.params.setLoggedIn;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hi!</Text>
-      {wrongPassword && <Text style={styles.error}>Wrong username or password</Text>}
+      {wrongPassword && (
+        <Text style={styles.error}>Wrong username or password</Text>
+      )}
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -61,8 +62,7 @@ function LoginScreen(props) {
             username,
             password,
             setWrongPassword,
-            props.navigation,
-            props.setLoggedIn
+            setLoggedIn
           )
         }
       />

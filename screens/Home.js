@@ -38,12 +38,12 @@ function handleLogOut(setLoggedIn) {
   });
 }
 
-export default function HomeScreen(props) {
-  const setLoggedIn = props.setLoggedIn;
+export default function HomeScreen({route, navigation}) {
+  const setLoggedIn = route.params.setLoggedIn;
 
   return (
     <View style={styles.container}>
-      <Button title="Transactions" onPress={() => props.navigation.navigate("Transactions")} />
+      <Button title="Transactions" onPress={() => navigation.navigate("Transactions")} />
       <Button title="Connect Bank" onPress={handleBankLink} />
       <Button title="Logout" onPress={() => handleLogOut(setLoggedIn)} />
     </View>

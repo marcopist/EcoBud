@@ -9,9 +9,8 @@ const AuthNavigator = ({ setLoggedIn }) => (
   <AuthStack.Navigator>
     <AuthStack.Screen
       name="Login"
-      component={(props) => (
-        <LoginScreen {...props} setLoggedIn={setLoggedIn} />
-      )}
+      component={LoginScreen}
+      initialParams={{ setLoggedIn: setLoggedIn }}
     />
   </AuthStack.Navigator>
 );
