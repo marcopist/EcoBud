@@ -1,12 +1,10 @@
 // TransactionsList.js
 import {
   View,
-  Button,
   StyleSheet,
   Text,
-  Linking,
-  ScrollView,
   FlatList,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useState } from "react";
 import config from "../config";
@@ -21,7 +19,6 @@ function getTransactions(setTransactions) {
   }).then((response) => {
     if (response.status == 200) {
       response.json().then((data) => {
-        console.log(data.transactions);
         setTransactions(data.transactions);
       });
     } else {
@@ -30,16 +27,36 @@ function getTransactions(setTransactions) {
   });
 }
 
-export default function TransactionsListScreen(props) {
+function formatDate(date) {
+  // Takes a date string in ISO format and returns
+  // a string in the format "Month, Day"
+  const dateObj = new Date(date);
+  const month = dateObj.toLocaleString("default", { month: "short" });
+  const day = dateObj.getDate();
+  return `${month} ${day}`;
+}
+
+function handleOnTransactionPressed(navigation, id) {
+  console.log("Pressed", id);
+  navigation.navigate("TransactionSingle", { id: id });
+}
+
+export default function TransactionsListScreen({ navigation }) {
   const [transactions, setTransactions] = useState([]);
   getTransactions(setTransactions);
 
   const renderItem = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={styles.cell}>{item.date}</Text>
-      <Text style={styles.cell}>{item.description.display}</Text>
-      <Text style={styles.cell}>{item.amount} {item.currency}</Text>
-    </View>
+    <TouchableWithoutFeedback
+      onPress={() => handleOnTransactionPressed(navigation, item.id)}
+    >
+      <View style={styles.row}>
+        <Text style={styles.cell.description}>{item.description.display}</Text>
+        <Text style={styles.cell.date}>{formatDate(item.date)}</Text>
+        <Text style={styles.cell.amount}>
+          {item.amount} {item.currency}
+        </Text>
+      </View>
+    </TouchableWithoutFeedback>
   );
 
   return (
@@ -53,18 +70,28 @@ export default function TransactionsListScreen(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flexGrow: 1,
-    },
-    row: {
-      flexDirection: "row",
-      justifyContent: "space-around", // Changed from "space-between"
-      padding: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: "#ccc",
-    },
-    cell: {
+  container: {
+    flexGrow: 1,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  cell: {
+    description: {
       flex: 1,
-      textAlign: 'center', // Added this line
+      textAlign: "left",
     },
-  });
+    date: {
+      width: "12.5%",
+      textAlign: "center",
+    },
+    amount: {
+      width: "22.5%",
+      textAlign: "right",
+    },
+  },
+});

@@ -12,7 +12,7 @@ function handleBankLink() {
   }).then((response) => {
     if (response.status == 200) {
       response.json().then((data) => {
-        console.log(data.url)
+        console.log(data.url);
         Linking.openURL(data.url);
       });
     } else {
@@ -29,6 +29,7 @@ function handleLogOut(setLoggedIn) {
       "Content-Type": "application/json",
     },
   }).then((response) => {
+    console.log(response.status);
     if (response.status == 200) {
       console.log("Logged out");
       setLoggedIn(false);
@@ -38,12 +39,15 @@ function handleLogOut(setLoggedIn) {
   });
 }
 
-export default function HomeScreen({route, navigation}) {
+export default function HomeScreen({ route, navigation }) {
   const setLoggedIn = route.params.setLoggedIn;
 
   return (
     <View style={styles.container}>
-      <Button title="Transactions" onPress={() => navigation.navigate("Transactions")} />
+      <Button
+        title="Transactions"
+        onPress={() => navigation.navigate("Transactions")}
+      />
       <Button title="Connect Bank" onPress={handleBankLink} />
       <Button title="Logout" onPress={() => handleLogOut(setLoggedIn)} />
     </View>
