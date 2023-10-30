@@ -1,20 +1,42 @@
-// TransactionsList.js
-import { View, Text, TextInput } from "react-native";
 import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Button,
+  StyleSheet,
+} from "react-native";
 import config from "../config";
-import { StyleSheet } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import Checkbox from "expo-checkbox";
 
 function getTransaction(id) {
-  url = config.baseUrl + "/transactions/" + id;
+  const url = config.baseUrl + "/transactions/" + id;
   return fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   }).then((response) => {
-    if (response.status == 200) {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        return data.transaction;
+      });
+    } else {
+      throw new Error("Transactions failed");
+    }
+  });
+}
+
+function changeTransaction(id, transaction) {
+  const url = config.baseUrl + "/transactions/" + id;
+  return fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ transaction: transaction }),
+  }).then((response) => {
+    if (response.status === 200) {
       return response.json().then((data) => data.transaction);
     } else {
       throw new Error("Transactions failed");
@@ -22,170 +44,137 @@ function getTransaction(id) {
   });
 }
 
-export default function TransactionSingleScreen({ route, navigation }) {
-  const id = route.params.id;
+// ... (your imports remain unchanged)
+
+export default function TransactionSingle({ route, navigation }) {
+  const transactionId = route.params.id;
   const [transaction, setTransaction] = useState(null);
-  const [date, setDate] = useState(new Date());
-  const [oneOff, setOneOff] = useState(false);
-  const [ecoStartDate, setEcoStartDate] = useState(new Date());
-  const [ecoEndDate, setEcoEndDate] = useState(new Date());
 
   useEffect(() => {
-    getTransaction(id)
-      .then((transaction) => {
-        setTransaction(transaction);
-        if (transaction.date) {
-          setDate(new Date(transaction.date));
-        }
-        if (transaction.ecoData.oneOff) {
-          setOneOff(true);
-        }
-        if (transaction.ecoData.startDate) {
-          setEcoStartDate(new Date(transaction.ecoData.startDate));
-        }
-        if (transaction.ecoData.endDate) {
-          setEcoEndDate(new Date(transaction.ecoData.endDate));
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to fetch transaction:", error);
-      });
-  }, [id]);
+    getTransaction(transactionId).then((transaction) => {
+      setTransaction(transaction);
+    });
+  }, [transactionId]);
 
-  const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setDate(currentDate);
-    transaction.date = currentDate.toISOString();
-    setTransaction({ ...transaction });
+  const handleFieldChange = (field, value) => {
+    setTransaction((prevTransaction) => ({
+      ...prevTransaction,
+      [field]: value,
+    }));
   };
 
-  const onEcoStartDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setEcoStartDate(currentDate);
-    transaction.ecoData.startDate = currentDate.toISOString();
-    setTransaction({ ...transaction });
-  };
-
-  const onEcoEndDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setEcoEndDate(currentDate);
-    transaction.ecoData.endDate = currentDate.toISOString();
-    setTransaction({ ...transaction });
+  const renderField = (
+    label,
+    value,
+    editable = false,
+    keyboardType = "default"
+  ) => {
+    return (
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>{label}:</Text>
+        {editable ? (
+          <TextInput
+            style={styles.editableField}
+            value={value ? value.toString() : ""}
+            onChangeText={(text) =>
+              handleFieldChange(label.toLowerCase(), text)
+            }
+            keyboardType={keyboardType}
+          />
+        ) : (
+          <Text style={styles.value}>{value}</Text>
+        )}
+      </View>
+    );
   };
 
   if (!transaction) {
-    return <Text style={styles.loading}>Loading...</Text>;
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Transaction Details</Text>
-      <View style={styles.horizontalLine} />
-      <View style={styles.row}>
-        <Text style={styles.text}>Transaction ID:</Text>
-        <Text style={styles.value.text}>
-          {transaction.id.slice(0, 4)}...{transaction.id.slice(-4)}
-        </Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.text}>Transaction amount:</Text>
-        <Text style={styles.value.text}>
-          {transaction.amount} {transaction.currency}
-        </Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.text}>Summary:</Text>
-        <TextInput
-          style={styles.value.textInput}
-          value={transaction.description.user}
-          editable={true}
-          onChangeText={(text) => {
-            transaction.description.user = text;
-            setTransaction({ ...transaction });
+    <ScrollView style={styles.container}>
+      <Text style={styles.heading}>Transaction Details</Text>
+
+      {renderField("Username", transaction.username)}
+      {renderField("ID", transaction.id)}
+      {renderField("Amount", transaction.amount, true, "numeric")}
+      {renderField("Currency", transaction.currency, true)}
+
+      {/* Handle the 'ecoData' section explicitly */}
+      <Text style={styles.subHeading}>Eco Data:</Text>
+      {renderField("Start Date", transaction.ecoData.startDate, true)}
+      {renderField("End Date", transaction.ecoData.endDate, true)}
+      {renderField(
+        "Daily Amount",
+        transaction.ecoData.dailyAmount,
+        true,
+        "numeric"
+      )}
+
+      {/* Add similar renderField calls for other fields */}
+
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Save Changes"
+          onPress={() => {
+            // Implement logic to save changes to the server
+            console.log("Saving changes:", transaction);
           }}
-        ></TextInput>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.text}>Date:</Text>
-        <DateTimePicker
-          style={styles.value}
-          value={date}
-          onChange={onDateChange}
         />
       </View>
-      <View style={styles.horizontalLine} />
-      <View style={styles.row}>
-        <Text style={styles.text}>One off:</Text>
-        <Checkbox
-          disabled={false}
-          value={oneOff}
-          onValueChange={(newValue) => setOneOff(newValue)}
-        />
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.text}>Start Date:</Text>
-        <DateTimePicker
-          style={styles.value}
-          value={ecoStartDate}
-          onChange={onEcoStartDateChange}
-        />
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.text}>End Date:</Text>
-        <DateTimePicker
-          style={styles.value}
-          value={ecoEndDate}
-          onChange={onEcoEndDateChange}
-        />
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  subHeading: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 16,
+    marginBottom: 8,
+  },
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
+    padding: 16,
   },
-  title: {
+  heading: {
     fontSize: 24,
-    marginBottom: 20,
-    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: 16,
   },
-  text: {
-    fontSize: 18,
-    marginBottom: 10,
-    textAlign: "left",
+  fieldContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 16,
+    marginRight: 8,
   },
   value: {
-    text: {
-      flex: 1,
-      fontSize: 18,
-      marginBottom: 10,
-      textAlign: "right",
-    },
-    textInput: {
-      flex: 1,
-      fontSize: 18,
-      marginBottom: 10,
-      textAlign: "right",
-      color: "blue",
-    },
+    fontSize: 16,
+    color: "black", // You can customize the color
   },
-  row: {
-    flexDirection: "row",
+  editableField: {
+    flex: 1,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 8,
+  },
+  buttonContainer: {
+    marginTop: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  loading: {
-    fontSize: 18,
-    textAlign: "center",
-  },
-  horizontalLine: {
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-    marginBottom: 20,
   },
 });
