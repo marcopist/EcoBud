@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import config from "../config";
 
 function getTransactions(setTransactions) {
@@ -43,14 +43,16 @@ function handleOnTransactionPressed(navigation, id) {
 
 export default function TransactionsListScreen({ navigation }) {
   const [transactions, setTransactions] = useState([]);
-  getTransactions(setTransactions);
+  useEffect(() => {
+    getTransactions(setTransactions);
+  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableWithoutFeedback
       onPress={() => handleOnTransactionPressed(navigation, item.id)}
     >
       <View style={styles.row}>
-        <Text style={styles.cell.description}>{item.description.display}</Text>
+        <Text style={styles.cell.description}>{item.description.user}</Text>
         <Text style={styles.cell.date}>{formatDate(item.date)}</Text>
         <Text style={styles.cell.amount}>
           {item.amount} {item.currency}
