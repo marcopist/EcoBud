@@ -40,6 +40,15 @@ function changeTransaction(id, transaction) {
   });
 }
 
+function dailyAmount(transaction) {
+  const startDate = new Date(transaction.ecoData.startDate);
+  const endDate = new Date(transaction.ecoData.endDate);
+
+  const days = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
+
+  return transaction.amount / days;
+}
+
 // function validateTransaction(transaction) {
 //   if (transaction.amount == null) {
 //     return false;
@@ -78,6 +87,12 @@ export default function TransactionSingleScreen({ route, navigation }) {
     });
   }, [transactionId]);
 
+  useEffect(() => {
+    if (transaction) {
+      changeTransaction(transactionId, transaction);
+    }
+  }, [transaction]);
+
   if (!transaction) {
     return <Text style={styles.loading}>Loading...</Text>;
   }
@@ -114,7 +129,7 @@ export default function TransactionSingleScreen({ route, navigation }) {
           onChangeText={(text) => {
             setTransaction((prevTransaction) => ({
               ...prevTransaction,
-              description: { user: text, ...prevTransaction.description },
+              description: { ...prevTransaction.description, user: text },
             }));
           }}
         ></TextInput>
@@ -125,7 +140,7 @@ export default function TransactionSingleScreen({ route, navigation }) {
         <Text style={styles.text}>Date:</Text>
         <DateTimePicker
           style={styles.value}
-          value={transaction.date}
+          value={new Date(transaction.date)}
           onChange={(event, date) => {
             setTransaction((prevTransaction) => ({
               ...prevTransaction,
@@ -133,6 +148,12 @@ export default function TransactionSingleScreen({ route, navigation }) {
             }));
           }}
         />
+      </View>
+
+      {/*Transaction status*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>Status:</Text>
+        <Text style={styles.value.text}>{transaction.tinkData.status}</Text>
       </View>
 
       {/*Horizontal line*/}
@@ -147,41 +168,61 @@ export default function TransactionSingleScreen({ route, navigation }) {
           onValueChange={(newValue) => {
             setTransaction((prevTransaction) => ({
               ...prevTransaction,
-              ecoData: { oneOff: newValue, ...prevTransaction.ecoData },
+              ecoData: { startDate: null, endDate: null, oneOff: newValue },
             }));
           }}
         />
       </View>
 
       {/*Eco start date*/}
-      <View style={styles.row}>
-        <Text style={styles.text}>Start Date:</Text>
-        <DateTimePicker
-          style={styles.value}
-          value={transaction.ecoData.startDate}
-          onChange={(event, date) => {
-            setTransaction((prevTransaction) => ({
-              ...prevTransaction,
-              ecoData: { startDate: date, ...prevTransaction.ecoData },
-            }));
-          }}
-        />
-      </View>
+      {!transaction.ecoData.oneOff && (
+        <View style={styles.row}>
+          <Text style={styles.text}>Start Date:</Text>
+          <DateTimePicker
+            style={styles.value}
+            value={new Date(transaction.ecoData.startDate)}
+            onChange={(event, date) => {
+              setTransaction((prevTransaction) => ({
+                ...prevTransaction,
+                ecoData: {
+                  ...prevTransaction.ecoData,
+                  startDate: date.toISOString(),
+                },
+              }));
+            }}
+          />
+        </View>
+      )}
 
       {/*Eco end date*/}
-      <View style={styles.row}>
-        <Text style={styles.text}>End Date:</Text>
-        <DateTimePicker
-          style={styles.value}
-          value={transaction.ecoData.endDate}
-          onChange={(event, date) => {
-            setTransaction((prevTransaction) => ({
-              ...prevTransaction,
-              ecoData: { endDate: date, ...prevTransaction.ecoData },
-            }));
-          }}
-        />
-      </View>
+      {!transaction.ecoData.oneOff && (
+        <View style={styles.row}>
+          <Text style={styles.text}>End Date:</Text>
+          <DateTimePicker
+            style={styles.value}
+            value={new Date(transaction.ecoData.endDate)}
+            onChange={(event, date) => {
+              setTransaction((prevTransaction) => ({
+                ...prevTransaction,
+                ecoData: {
+                  ...prevTransaction.ecoData,
+                  endDate: date.toISOString(),
+                },
+              }));
+            }}
+          />
+        </View>
+      )}
+
+      {/*Daily amount*/}
+      {!transaction.ecoData.oneOff && (
+        <View style={styles.row}>
+          <Text style={styles.text}>Daily amount:</Text>
+          <Text style={styles.value.text}>
+            {dailyAmount(transaction).toFixed(2)} {transaction.currency}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
