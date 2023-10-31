@@ -1,23 +1,20 @@
+// TransactionsList.js
+import { View, Text, TextInput } from "react-native";
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  Button,
-  StyleSheet,
-} from "react-native";
 import config from "../config";
+import { StyleSheet } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Checkbox from "expo-checkbox";
 
 function getTransaction(id) {
-  const url = config.baseUrl + "/transactions/" + id;
+  url = config.baseUrl + "/transactions/" + id;
   return fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   }).then((response) => {
-    if (response.status === 200) {
+    if (response.status == 200) {
       return response.json().then((data) => {
         return data.transaction;
       });
@@ -26,9 +23,8 @@ function getTransaction(id) {
     }
   });
 }
-
 function changeTransaction(id, transaction) {
-  const url = config.baseUrl + "/transactions/" + id;
+  url = config.baseUrl + "/transactions/" + id;
   return fetch(url, {
     method: "PUT",
     headers: {
@@ -36,7 +32,7 @@ function changeTransaction(id, transaction) {
     },
     body: JSON.stringify({ transaction: transaction }),
   }).then((response) => {
-    if (response.status === 200) {
+    if (response.status == 200) {
       return response.json().then((data) => data.transaction);
     } else {
       throw new Error("Transactions failed");
@@ -44,9 +40,35 @@ function changeTransaction(id, transaction) {
   });
 }
 
-// ... (your imports remain unchanged)
+// function validateTransaction(transaction) {
+//   if (transaction.amount == null) {
+//     return false;
+//   }
+//   if (transaction.currency == null) {
+//     return false;
+//   }
+//   if (transaction.description.user == null) {
+//     return false;
+//   }
+//   if (transaction.date == null) {
+//     return false;
+//   }
+//   if (transaction.ecoData.oneOff == null) {
+//     return false;
+//   }
+//   if (transaction.ecoData.startDate == null) {
+//     return false;
+//   }
+//   if (transaction.ecoData.endDate == null) {
+//     return false;
+//   }
+//   if (transaction.ecoData.startDate > transaction.ecoData.endDate) {
+//     return false;
+//   }
+//   return true;
+// }
 
-export default function TransactionSingle({ route, navigation }) {
+export default function TransactionSingleScreen({ route, navigation }) {
   const transactionId = route.params.id;
   const [transaction, setTransaction] = useState(null);
 
@@ -56,125 +78,158 @@ export default function TransactionSingle({ route, navigation }) {
     });
   }, [transactionId]);
 
-  const handleFieldChange = (field, value) => {
-    setTransaction((prevTransaction) => ({
-      ...prevTransaction,
-      [field]: value,
-    }));
-  };
-
-  const renderField = (
-    label,
-    value,
-    editable = false,
-    keyboardType = "default"
-  ) => {
-    return (
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>{label}:</Text>
-        {editable ? (
-          <TextInput
-            style={styles.editableField}
-            value={value ? value.toString() : ""}
-            onChangeText={(text) =>
-              handleFieldChange(label.toLowerCase(), text)
-            }
-            keyboardType={keyboardType}
-          />
-        ) : (
-          <Text style={styles.value}>{value}</Text>
-        )}
-      </View>
-    );
-  };
-
   if (!transaction) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Text style={styles.loading}>Loading...</Text>;
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.heading}>Transaction Details</Text>
+    <View style={styles.container}>
+      {/*Title and horizontal line*/}
+      <Text style={styles.title}>Transaction Details</Text>
+      <View style={styles.horizontalLine} />
 
-      {renderField("Username", transaction.username)}
-      {renderField("ID", transaction.id)}
-      {renderField("Amount", transaction.amount, true, "numeric")}
-      {renderField("Currency", transaction.currency, true)}
+      {/*Transaction ID*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>Transaction ID:</Text>
+        <Text style={styles.value.text}>
+          {transaction.id.slice(0, 4)}...{transaction.id.slice(-4)}
+        </Text>
+      </View>
 
-      {/* Handle the 'ecoData' section explicitly */}
-      <Text style={styles.subHeading}>Eco Data:</Text>
-      {renderField("Start Date", transaction.ecoData.startDate, true)}
-      {renderField("End Date", transaction.ecoData.endDate, true)}
-      {renderField(
-        "Daily Amount",
-        transaction.ecoData.dailyAmount,
-        true,
-        "numeric"
-      )}
+      {/*Transaction amount & currency*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>Transaction amount:</Text>
+        <Text style={styles.value.text}>
+          {transaction.amount} {transaction.currency}
+        </Text>
+      </View>
 
-      {/* Add similar renderField calls for other fields */}
+      {/*Description of transaction*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>Summary:</Text>
+        <TextInput
+          style={styles.value.textInput}
+          value={transaction.description.user}
+          editable={true}
+          onChangeText={(text) => {
+            setTransaction((prevTransaction) => ({
+              ...prevTransaction,
+              description: { user: text, ...prevTransaction.description },
+            }));
+          }}
+        ></TextInput>
+      </View>
 
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Save Changes"
-          onPress={() => {
-            // Implement logic to save changes to the server
-            console.log("Saving changes:", transaction);
+      {/*Transaction date*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>Date:</Text>
+        <DateTimePicker
+          style={styles.value}
+          value={transaction.date}
+          onChange={(event, date) => {
+            setTransaction((prevTransaction) => ({
+              ...prevTransaction,
+              date: date,
+            }));
           }}
         />
       </View>
-    </ScrollView>
+
+      {/*Horizontal line*/}
+      <View style={styles.horizontalLine} />
+
+      {/*One off checkbox*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>One off:</Text>
+        <Checkbox
+          disabled={false}
+          value={transaction.ecoData.oneOff}
+          onValueChange={(newValue) => {
+            setTransaction((prevTransaction) => ({
+              ...prevTransaction,
+              ecoData: { oneOff: newValue, ...prevTransaction.ecoData },
+            }));
+          }}
+        />
+      </View>
+
+      {/*Eco start date*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>Start Date:</Text>
+        <DateTimePicker
+          style={styles.value}
+          value={transaction.ecoData.startDate}
+          onChange={(event, date) => {
+            setTransaction((prevTransaction) => ({
+              ...prevTransaction,
+              ecoData: { startDate: date, ...prevTransaction.ecoData },
+            }));
+          }}
+        />
+      </View>
+
+      {/*Eco end date*/}
+      <View style={styles.row}>
+        <Text style={styles.text}>End Date:</Text>
+        <DateTimePicker
+          style={styles.value}
+          value={transaction.ecoData.endDate}
+          onChange={(event, date) => {
+            setTransaction((prevTransaction) => ({
+              ...prevTransaction,
+              ecoData: { endDate: date, ...prevTransaction.ecoData },
+            }));
+          }}
+        />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  subHeading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 16,
-    marginBottom: 8,
-  },
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
+    backgroundColor: "#f5f5f5",
   },
-  heading: {
+  title: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: 20,
+    textAlign: "center",
   },
-  fieldContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginRight: 8,
+  text: {
+    fontSize: 18,
+    marginBottom: 10,
+    textAlign: "left",
   },
   value: {
-    fontSize: 16,
-    color: "black", // You can customize the color
+    text: {
+      flex: 1,
+      fontSize: 18,
+      marginBottom: 10,
+      textAlign: "right",
+    },
+    textInput: {
+      flex: 1,
+      fontSize: 18,
+      marginBottom: 10,
+      textAlign: "right",
+      color: "blue",
+    },
   },
-  editableField: {
-    flex: 1,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 8,
-  },
-  buttonContainer: {
-    marginTop: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
+  row: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  loading: {
+    fontSize: 18,
+    textAlign: "center",
+  },
+  horizontalLine: {
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    marginBottom: 20,
   },
 });
