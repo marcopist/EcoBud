@@ -1,14 +1,16 @@
 // Login.js
-import { View, Text, Button, StyleSheet, TextInput } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Button,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from "react-native";
+import React, {useState} from "react";
 import config from "../config";
 
-function handleLogin(
-  username,
-  password,
-  setWrongPassword,
-  setLoggedIn
-) {
+function handleLogin(username, password, setWrongPassword, setLoggedIn) {
   url = config.baseUrl + "/login";
   fetch(url, {
     method: "POST",
@@ -26,18 +28,14 @@ function handleLogin(
   });
 }
 
-function LoginScreen({ route, navigation }) {
+export default function LoginScreen({ route, navigation }) {
+  const setLoggedIn = route.params.setLoggedIn;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [wrongPassword, setWrongPassword] = useState(false);
-  const setLoggedIn = route.params.setLoggedIn;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Hi!</Text>
-      {wrongPassword && (
-        <Text style={styles.error}>Wrong username or password</Text>
-      )}
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -55,17 +53,14 @@ function LoginScreen({ route, navigation }) {
         autoCorrect={false}
         autoCapitalize="none"
       />
-      <Button
-        title="Go"
+      <TouchableOpacity
+        style={styles.button}
         onPress={() =>
-          handleLogin(
-            username,
-            password,
-            setWrongPassword,
-            setLoggedIn
-          )
+          handleLogin(username, password, setWrongPassword, setLoggedIn)
         }
-      />
+      >
+        <Text style={styles.buttonText}>Go</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -78,14 +73,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f5f5f5",
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  error: {
-    color: "red",
-    marginBottom: 20,
-  },
   input: {
     width: "100%",
     height: 40,
@@ -95,6 +82,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
   },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    width: "100%",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+  },
 });
-
-export default LoginScreen;

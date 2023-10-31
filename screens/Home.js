@@ -1,5 +1,12 @@
 // Home.js
-import { View, Button, StyleSheet, Linking } from "react-native";
+import {
+  View,
+  Button,
+  StyleSheet,
+  Linking,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import config from "../config";
 
 function handleBankLink() {
@@ -44,12 +51,21 @@ export default function HomeScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Button
-        title="Transactions"
+      <TouchableOpacity
+        style={styles.button}
         onPress={() => navigation.navigate("Transactions")}
-      />
-      <Button title="Connect Bank" onPress={handleBankLink} />
-      <Button title="Logout" onPress={() => handleLogOut(setLoggedIn)} />
+      >
+        <Text style={styles.buttonText}>Transactions</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleBankLink}>
+        <Text style={styles.buttonText}>Connect Bank</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleLogOut(setLoggedIn)}
+      >
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -59,5 +75,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    padding: 20,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    width: "100%",
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });
