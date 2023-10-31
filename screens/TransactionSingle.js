@@ -49,34 +49,6 @@ function dailyAmount(transaction) {
   return transaction.amount / days;
 }
 
-// function validateTransaction(transaction) {
-//   if (transaction.amount == null) {
-//     return false;
-//   }
-//   if (transaction.currency == null) {
-//     return false;
-//   }
-//   if (transaction.description.user == null) {
-//     return false;
-//   }
-//   if (transaction.date == null) {
-//     return false;
-//   }
-//   if (transaction.ecoData.oneOff == null) {
-//     return false;
-//   }
-//   if (transaction.ecoData.startDate == null) {
-//     return false;
-//   }
-//   if (transaction.ecoData.endDate == null) {
-//     return false;
-//   }
-//   if (transaction.ecoData.startDate > transaction.ecoData.endDate) {
-//     return false;
-//   }
-//   return true;
-// }
-
 export default function TransactionSingleScreen({ route, navigation }) {
   const transactionId = route.params.id;
   const [transaction, setTransaction] = useState(null);
@@ -144,7 +116,7 @@ export default function TransactionSingleScreen({ route, navigation }) {
           onChange={(event, date) => {
             setTransaction((prevTransaction) => ({
               ...prevTransaction,
-              date: date,
+              date: date.toISOString().substring(0, 10),
             }));
           }}
         />
@@ -190,7 +162,7 @@ export default function TransactionSingleScreen({ route, navigation }) {
                 ...prevTransaction,
                 ecoData: {
                   ...prevTransaction.ecoData,
-                  startDate: date.toISOString(),
+                  startDate: date.toISOString().substring(0, 10),
                 },
               }));
             }}
@@ -210,7 +182,7 @@ export default function TransactionSingleScreen({ route, navigation }) {
                 ...prevTransaction,
                 ecoData: {
                   ...prevTransaction.ecoData,
-                  endDate: date.toISOString(),
+                  endDate: date.toISOString().substring(0, 10),
                 },
               }));
             }}

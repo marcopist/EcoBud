@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screens/Home";
 import TransactionsListScreen from "../screens/TransactionsList";
 import TransactionSingleScreen from "../screens/TransactionSingle";
+import AnalyticsHomeScreen from "../screens/AnalyticsHome";
 
 const MainStack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const MainAppNavigator = ({ setLoggedIn }) => (
       name="TransactionSingle"
       component={TransactionSingleScreen}
     />
+    <MainStack.Screen name="Analytics" component={AnalyticsHomeScreen} />
   </MainStack.Navigator>
 );
 

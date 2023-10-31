@@ -57,6 +57,12 @@ export default function HomeScreen({ route, navigation }) {
       >
         <Text style={styles.buttonText}>Transactions</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Analytics")}
+      >
+        <Text style={styles.buttonText}>Analytics</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleBankLink}>
         <Text style={styles.buttonText}>Connect Bank</Text>
       </TouchableOpacity>
