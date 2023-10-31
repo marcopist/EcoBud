@@ -168,7 +168,11 @@ export default function TransactionSingleScreen({ route, navigation }) {
           onValueChange={(newValue) => {
             setTransaction((prevTransaction) => ({
               ...prevTransaction,
-              ecoData: { startDate: null, endDate: null, oneOff: newValue },
+              ecoData: {
+                startDate: transaction.date,
+                endDate: transaction.date,
+                oneOff: newValue,
+              },
             }));
           }}
         />
