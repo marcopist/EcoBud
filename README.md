@@ -7,9 +7,7 @@ Later on I will build some budgeting and reporitng features.
 Some screenshots:
 
 <img src="etc/screenshots/login.png" width=200>
-
-![Login Screen](etc/screenshots/login.png)
-![Home Screen](etc/screenshots/home.png)
-![Transactions List](etc/screenshots/transactions.png)
-![Single Transaction One Off](etc/screenshots/singleTransaction.png)
-![Periodical Transaction](etc/screenshots/singleTransactionNoOneOff.png)
+<img src="etc/screenshots/home.png" width=200>
+<img src="etc/screenshots/transactions.png" width=200>
+<img src="etc/screenshots/singleTransaction.png" width=200>
+<img src="etc/screenshots/singleTransactionNoOneOff.png" width=200>
