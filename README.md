@@ -6,8 +6,4 @@ Later on I will build some budgeting and reporitng features.
 
 Some screenshots:
 
-<img src="etc/screenshots/login.png" width=200>
-<img src="etc/screenshots/home.png" width=200>
-<img src="etc/screenshots/transactions.png" width=200>
-<img src="etc/screenshots/singleTransaction.png" width=200>
-<img src="etc/screenshots/singleTransactionNoOneOff.png" width=200>
+<img src="etc/screenshots/login.png" width=200> <img src="etc/screenshots/home.png" width=200> <img src="etc/screenshots/transactions.png" width=200> <img src="etc/screenshots/singleTransaction.png" width=200> <img src="etc/screenshots/singleTransactionNoOneOff.png" width=200>
