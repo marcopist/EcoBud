@@ -1,6 +1,7 @@
 // TransactionsList.js
 import {
   View,
+  SafeAreaView,
   StyleSheet,
   Text,
   FlatList,
@@ -8,6 +9,8 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import config from "../config";
+import { styles } from "../utils/Style";
+import { formatDate } from "../utils/Formatters";
 
 function getTransactions(setTransactions) {
   url = config.baseUrl + "/transactions";
@@ -25,15 +28,6 @@ function getTransactions(setTransactions) {
       throw new Error("Transactions failed");
     }
   });
-}
-
-function formatDate(date) {
-  // Takes a date string in ISO format and returns
-  // a string in the format "Month, Day"
-  const dateObj = new Date(date);
-  const month = dateObj.toLocaleString("default", { month: "short" });
-  const day = dateObj.getDate();
-  return `${month} ${day}`;
 }
 
 function handleOnTransactionPressed(navigation, id) {
@@ -62,38 +56,13 @@ export default function TransactionsListScreen({ navigation }) {
   );
 
   return (
+    <SafeAreaView style={styles.container}>
     <FlatList
-      contentContainerStyle={styles.container}
+      contentContainerStyle={styles.table}
       data={transactions}
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}
     />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  cell: {
-    description: {
-      flex: 1,
-      textAlign: "left",
-    },
-    date: {
-      width: "12.5%",
-      textAlign: "center",
-    },
-    amount: {
-      width: "22.5%",
-      textAlign: "right",
-    },
-  },
-});
