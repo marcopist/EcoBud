@@ -10,6 +10,8 @@ import {
 import config from "../config";
 import AuthContext from "../utils/AuthContext";
 import React, { useContext } from "react";
+import {blue} from "../utils/Style";
+import { styles } from "../utils/Style";
 
 function handleBankLink() {
   url = config.baseUrl + "/bank/link";
@@ -77,24 +79,3 @@ export default function HomeScreen({ route, navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 20,
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 5,
-    width: "100%",
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-});

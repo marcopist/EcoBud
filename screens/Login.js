@@ -10,6 +10,7 @@ import {
 import React, {useState, useContext} from "react";
 import config from "../config";
 import AuthContext from '../utils/AuthContext';
+import {styles} from '../utils/Style';
 
 function handleLogin(username, password, setWrongPassword, setLoggedIn) {
   url = config.baseUrl + "/login";
@@ -65,32 +66,3 @@ export default function LoginScreen({ route, navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#f5f5f5",
-  },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 5,
-    width: "100%",
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-});
