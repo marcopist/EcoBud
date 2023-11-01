@@ -5,12 +5,11 @@ import LoginScreen from "../screens/Login";
 
 const AuthStack = createStackNavigator();
 
-const AuthNavigator = ({ setLoggedIn }) => (
+const AuthNavigator = () => (
   <AuthStack.Navigator>
     <AuthStack.Screen
       name="Login"
       component={LoginScreen}
-      initialParams={{ setLoggedIn: setLoggedIn }}
     />
   </AuthStack.Navigator>
 );

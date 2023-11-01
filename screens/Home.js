@@ -8,6 +8,8 @@ import {
   Text,
 } from "react-native";
 import config from "../config";
+import AuthContext from "../utils/AuthContext";
+import React, { useContext } from "react";
 
 function handleBankLink() {
   url = config.baseUrl + "/bank/link";
@@ -47,7 +49,7 @@ function handleLogOut(setLoggedIn) {
 }
 
 export default function HomeScreen({ route, navigation }) {
-  const setLoggedIn = route.params.setLoggedIn;
+  const setLoggedIn = useContext(AuthContext);
 
   return (
     <View style={styles.container}>

@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import config from "../config";
+import AuthContext from '../utils/AuthContext';
 
 function handleLogin(username, password, setWrongPassword, setLoggedIn) {
   url = config.baseUrl + "/login";
@@ -29,7 +30,7 @@ function handleLogin(username, password, setWrongPassword, setLoggedIn) {
 }
 
 export default function LoginScreen({ route, navigation }) {
-  const setLoggedIn = route.params.setLoggedIn;
+  const setLoggedIn = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [wrongPassword, setWrongPassword] = useState(false);

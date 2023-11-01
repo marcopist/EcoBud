@@ -8,12 +8,11 @@ import AnalyticsHomeScreen from "../screens/AnalyticsHome";
 
 const MainStack = createStackNavigator();
 
-const MainAppNavigator = ({ setLoggedIn }) => (
+const MainAppNavigator = () => (
   <MainStack.Navigator>
     <MainStack.Screen
       name="Home"
       component={HomeScreen}
-      initialParams={{ setLoggedIn: setLoggedIn }}
     />
     <MainStack.Screen name="Transactions" component={TransactionsListScreen} />
     <MainStack.Screen

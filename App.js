@@ -3,19 +3,17 @@ import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigator from "./navigators/AuthNavigator";
 import MainAppNavigator from "./navigators/MainAppNavigator";
+import AuthContext from "./utils/AuthContext";
 
 const App = () => {
-  // Destructure the array returned by useState
   const [isLoggedIn, setLoggedIn] = useState(false);
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? (
-        <MainAppNavigator setLoggedIn={setLoggedIn}/>
-      ) : (
-        <AuthNavigator setLoggedIn={setLoggedIn} />
-      )}
-    </NavigationContainer>
+    <AuthContext.Provider value={setLoggedIn}>
+      <NavigationContainer>
+        {isLoggedIn ? <MainAppNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 };
 

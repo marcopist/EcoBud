@@ -11,18 +11,12 @@ import {
 import React, { useState, useEffect } from "react";
 import config from "../config";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { getCostPerPeriod } from "../logics/Analysis";
+import { useFocusEffect } from '@react-navigation/native';
 
-function getTransactionsFromPeriod(setTransactions, startDate, endDate) {
-  startDateStr = startDate.toISOString().substring(0, 10);
-  endDateStr = endDate.toISOString().substring(0, 10);
-
-  url =
-    config.baseUrl +
-    "/analytics/transactions/" +
-    startDateStr +
-    "/" +
-    endDateStr;
+function getAnalytics(startDate, endDate, setAnalytics) {
+  const startDateStr = startDate.toISOString().substring(0, 10);
+  const endDateStr = endDate.toISOString().substring(0, 10);
+  url = config.baseUrl + "/analytics/" + startDateStr + "/" + endDateStr;
   fetch(url, {
     method: "GET",
     headers: {
@@ -31,33 +25,19 @@ function getTransactionsFromPeriod(setTransactions, startDate, endDate) {
   }).then((response) => {
     if (response.status == 200) {
       response.json().then((data) => {
-        setTransactions(data.transactions);
+        setAnalytics(data.analytics);
       });
     } else {
-      throw new Error("Transactions failed");
+      throw new Error("Analytics failed");
     }
   });
 }
 
-function getCostFromPeriod(setCost, startDate, endDate) {
-  startDateStr = startDate.toISOString().substring(0, 10);
-  endDateStr = endDate.toISOString().substring(0, 10);
+function formatNumber(num) {
+  // Takes a number and returns a string with 2 decimal
+  // places and commas for thousands, millions, etc.
 
-  url = config.baseUrl + "/analytics/cost/" + startDateStr + "/" + endDateStr;
-  fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (response.status == 200) {
-      response.json().then((data) => {
-        setCost(data.cost);
-      });
-    } else {
-      throw new Error("Transactions failed");
-    }
-  });
+  return num ? num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"): "";
 }
 
 function formatDate(date) {
@@ -78,25 +58,23 @@ export default function AnalyticsHomeScreen({ route, navigation }) {
   const [loaded, setLoaded] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [transactions, setTransactions] = useState([]);
-  const [cost, setCost] = useState(0);
+  const [analytics, setAnalytics] = useState({});
 
-  useEffect(() => {
-    getTransactionsFromPeriod(setTransactions, startDate, endDate);
-    getCostFromPeriod(setCost, startDate, endDate);
-    setLoaded(true);
-  }, [startDate, endDate]);
+  useFocusEffect(
+    React.useCallback(() => {
+      getAnalytics(startDate, endDate, setAnalytics);
+      setLoaded(true);
+    }, [startDate, endDate])
+  );
 
   const renderItem = ({ item }) => (
     <TouchableWithoutFeedback
-      onPress={() => handleOnTransactionPressed(navigation, item.id)}
+      onPress={() => handleOnTransactionPressed(navigation, item.transaction.id)}
     >
       <View style={styles.tableRow}>
-        <Text style={styles.cell.description}>{item.description.user}</Text>
-        <Text style={styles.cell.date}>{formatDate(item.date)}</Text>
-        <Text style={styles.cell.amount}>
-          {getCostPerPeriod(item, startDate, endDate)} {item.currency}
-        </Text>
+        <Text style={styles.cell.description}>{item.transaction.description.user}</Text>
+        <Text style={styles.cell.date}>{formatDate(item.transaction.date)}</Text>
+        <Text style={styles.cell.amount}> {formatNumber(item.outputData.periodCost)} {item.transaction.currency}</Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -135,11 +113,15 @@ export default function AnalyticsHomeScreen({ route, navigation }) {
           />
         </View>
       </View>
+      <View style={styles.mainRow}>
+        <Text>Income:</Text>
+        <Text style={styles.periodCost}>{formatNumber(analytics.periodCost)}</Text>
+      </View>
       <FlatList
         contentContainerStyle={styles.table}
-        data={transactions}
+        data={analytics.transactions}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.transaction.id.toString()}
       />
     </View>
   );
@@ -174,6 +156,10 @@ const styles = StyleSheet.create({
   table: {
     flex: 1,
     width: "100%",
+  },
+  periodCost: {
+    textAlign: "right",
+    color: "#007BFF"
   },
   cell: {
     description: {
