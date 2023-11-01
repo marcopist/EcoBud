@@ -11,7 +11,8 @@ import {
 import React, { useState, useEffect } from "react";
 import config from "../config";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
+import { formatDate, formatNumber } from "../utils/Formatters";
 
 function getAnalytics(startDate, endDate, setAnalytics) {
   const startDateStr = startDate.toISOString().substring(0, 10);
@@ -31,22 +32,6 @@ function getAnalytics(startDate, endDate, setAnalytics) {
       throw new Error("Analytics failed");
     }
   });
-}
-
-function formatNumber(num) {
-  // Takes a number and returns a string with 2 decimal
-  // places and commas for thousands, millions, etc.
-
-  return num ? num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"): "";
-}
-
-function formatDate(date) {
-  // Takes a date string in ISO format and returns
-  // a string in the format "Month, Day"
-  const dateObj = new Date(date);
-  const month = dateObj.toLocaleString("en", { month: "short" });
-  const day = dateObj.getDate();
-  return `${month} ${day}`;
 }
 
 function handleOnTransactionPressed(navigation, id) {
@@ -69,12 +54,21 @@ export default function AnalyticsHomeScreen({ route, navigation }) {
 
   const renderItem = ({ item }) => (
     <TouchableWithoutFeedback
-      onPress={() => handleOnTransactionPressed(navigation, item.transaction.id)}
+      onPress={() =>
+        handleOnTransactionPressed(navigation, item.transaction.id)
+      }
     >
       <View style={styles.tableRow}>
-        <Text style={styles.cell.description}>{item.transaction.description.user}</Text>
-        <Text style={styles.cell.date}>{formatDate(item.transaction.date)}</Text>
-        <Text style={styles.cell.amount}> {formatNumber(item.outputData.periodCost)} {item.transaction.currency}</Text>
+        <Text style={styles.cell.description}>
+          {item.transaction.description.user}
+        </Text>
+        <Text style={styles.cell.date}>
+          {formatDate(item.transaction.date)}
+        </Text>
+        <Text style={styles.cell.amount}>
+          {" "}
+          {formatNumber(item.outputData.periodCost)} {item.transaction.currency}
+        </Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -115,7 +109,9 @@ export default function AnalyticsHomeScreen({ route, navigation }) {
       </View>
       <View style={styles.mainRow}>
         <Text>Income:</Text>
-        <Text style={styles.periodCost}>{formatNumber(analytics.periodCost)}</Text>
+        <Text style={styles.periodCost}>
+          {formatNumber(analytics.periodCost)}
+        </Text>
       </View>
       <FlatList
         contentContainerStyle={styles.table}
@@ -159,7 +155,7 @@ const styles = StyleSheet.create({
   },
   periodCost: {
     textAlign: "right",
-    color: "#007BFF"
+    color: "#007BFF",
   },
   cell: {
     description: {
