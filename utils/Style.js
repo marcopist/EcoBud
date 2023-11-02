@@ -10,8 +10,8 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   input: {
-    width: "100%",
     height: 40,
+    width: "90%",
     borderColor: "gray",
     borderWidth: 0.5,
     marginBottom: 20,
@@ -20,9 +20,9 @@ export const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: blue,
+    width: "90%",
     padding: 10,
     borderRadius: 5,
-    width: "100%",
     height: 40,
     marginBottom: 5,
     marginTop: 5,
@@ -56,5 +56,11 @@ export const styles = StyleSheet.create({
   table: {
     flex: 1,
     width: "90%",
+  },
+  warning: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 10,
   },
 });

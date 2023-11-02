@@ -7,25 +7,18 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import React, {useState, useContext} from "react";
-import config from "../config";
-import AuthContext from '../utils/AuthContext';
-import {styles} from '../utils/Style';
+import React, { useState, useContext } from "react";
+
+import AuthContext from "../utils/AuthContext";
+import { styles } from "../utils/Style";
+import { login } from "../utils/Api";
 
 function handleLogin(username, password, setWrongPassword, setLoggedIn) {
-  url = config.baseUrl + "/login";
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username: username, password: password }),
-  }).then((response) => {
+  login(username, password).then((response) => {
     if (response.status == 200) {
-      setLoggedIn(true); // Use setLoggedIn to update the state
+      setLoggedIn(true);
     } else {
       setWrongPassword(true);
-      throw new Error("Login failed");
     }
   });
 }
@@ -38,6 +31,9 @@ export default function LoginScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
+      {wrongPassword && (
+        <Text style={styles.warning}>Wrong username or password</Text>
+      )}
       <TextInput
         style={styles.input}
         placeholder="Username"
