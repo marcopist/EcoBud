@@ -8,26 +8,13 @@ import {
 	TouchableWithoutFeedback
 } from "react-native";
 import React, {useState, useEffect} from "react";
-import config from "../config";
 import {styles} from "../utils/Style";
 import {formatDate} from "../utils/Formatters";
+import {getTransactions} from "../utils/Api";
 
-function getTransactions(setTransactions) {
-	url = config.baseUrl + "/transactions";
-	fetch(url, {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json"
-		}
-	}).then(response => {
-		if (response.status == 200) {
-			response.json().then(data => {
-				setTransactions(data.transactions);
-			});
-		} else {
-			throw new Error("Transactions failed");
-		}
-	});
+async function loadTransactions(setTransactions) {
+	let transactions = await getTransactions();
+	setTransactions(transactions);
 }
 
 function handleOnTransactionPressed(navigation, id) {
@@ -38,15 +25,17 @@ function handleOnTransactionPressed(navigation, id) {
 export default function TransactionsListScreen({navigation}) {
 	const [transactions, setTransactions] = useState([]);
 	useEffect(() => {
-		getTransactions(setTransactions);
+		loadTransactions(setTransactions);
 	}, []);
 
 	const renderItem = ({item}) => (
-		<TouchableWithoutFeedback onPress={() => handleOnTransactionPressed(navigation, item.id)}>
-			<View style={styles.row}>
-				<Text style={styles.cell.description}>{item.description.user}</Text>
-				<Text style={styles.cell.date}>{formatDate(item.date)}</Text>
-				<Text style={styles.cell.amount}>
+		<TouchableWithoutFeedback onPress={() => handleOnTransactionPressed(navigation, item._id)}>
+			<View style={styles.tableTransactions.row}>
+				<Text style={styles.tableTransactions.cell.description}>
+					{item.description.user}
+				</Text>
+				<Text style={styles.tableTransactions.cell.date}>{formatDate(item.date)}</Text>
+				<Text style={styles.tableTransactions.cell.amount}>
 					{item.amount} {item.currency}
 				</Text>
 			</View>
@@ -54,13 +43,12 @@ export default function TransactionsListScreen({navigation}) {
 	);
 
 	return (
-		<SafeAreaView style={styles.container}>
 			<FlatList
-				contentContainerStyle={styles.table}
+				style={styles.tableTransactions.frame}
 				data={transactions}
 				renderItem={renderItem}
-				keyExtractor={item => item.id.toString()}
+				keyExtractor={item => item._id.toString()}
+				initialNumToRender={transactions.length}
 			/>
-		</SafeAreaView>
 	);
 }

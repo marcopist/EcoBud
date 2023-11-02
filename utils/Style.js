@@ -1,42 +1,77 @@
 import {StyleSheet} from "react-native";
 
 const blue = "#007BFF";
+const lightGray = "#f5f5f5";
+const darkGray = "#333";
 
-export const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#f5f5f5"
-	},
-	input: {
-		height: 40,
-		width: "90%",
-		borderColor: "gray",
-		borderWidth: 0.5,
-		marginBottom: 20,
-		paddingHorizontal: 10,
-		borderRadius: 5
-	},
-	button: {
-		backgroundColor: blue,
-		width: "90%",
-		padding: 10,
-		borderRadius: 5,
-		height: 40,
-		marginBottom: 5,
-		marginTop: 5
-	},
-	buttonText: {
-		color: "white",
-		textAlign: "center"
-	},
+container = {
+	flex: 1,
+	justifyContent: "center",
+	alignItems: "center",
+	backgroundColor: lightGray,
+	padding: 20
+};
+
+transactionsSingleContainer = {
+    ...container,
+    flex: 0,
+    justifyContent: "flex-start",
+    padding: 10, // Add some padding
+}
+input = {
+    height: 40,
+    width: "100%",
+    borderColor: darkGray,
+    borderWidth: 0.5,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 10, // Increase borderRadius
+    padding: 10
+};
+
+button = {
+	...input,
+	backgroundColor: blue
+};
+
+text = {
+	flex: 1,
+	marginTop: 10,
+	marginBottom: 10
+};
+
+buttonText = {
+	...text,
+	marginTop: 0,
+	marginBottom: 0,
+	color: "white",
+	textAlign: "center"
+};
+
+warningText = {
+	...text,
+	color: "red",
+}
+
+loadingText = {
+	...text,
+	textAlign: "center"
+};
+
+title = {
+    ...text,
+    fontSize: 24,
+    textAlign: "center",
+    fontWeight: 'bold',
+};
+
+tableTransactions = {
 	row: {
 		flexDirection: "row",
 		justifyContent: "space-around",
 		padding: 10,
 		borderBottomWidth: 1,
-		borderBottomColor: "#ccc",
+		borderBottomColor: "gray",
 		width: "100%"
 	},
 	cell: {
@@ -53,14 +88,56 @@ export const styles = StyleSheet.create({
 			textAlign: "right"
 		}
 	},
-	table: {
+	frame: {
 		flex: 1,
-		width: "90%"
-	},
-	warning: {
-		color: "red",
-		textAlign: "center",
-		marginTop: 10,
-		marginBottom: 10
 	}
+};
+
+horizontalLine = {
+	borderBottomColor: "gray",
+	borderBottomWidth: 1,
+	height: 1
+};
+
+line = {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+	marginBottom: 10,
+    padding: 5,
+    backgroundColor: 'white',
+    borderRadius: 5,
+};
+
+value = {
+    text: {
+        flex: 1,
+        marginBottom: 10,
+        textAlign: "right",
+        color: darkGray,
+    },
+    textInput: {
+        flex: 1,
+        marginBottom: 10,
+        textAlign: "right",
+        color: blue,
+    }
+}
+
+export const styles = StyleSheet.create({
+	container: container,
+	transactionsSingleContainer: transactionsSingleContainer,
+	input: input,
+	button: button,
+	buttonText: buttonText,
+	tableTransactions: tableTransactions,
+	warningText: warningText,
+	text: text,
+	horizontalLine: horizontalLine,
+	loading: loadingText,
+	textInput: text,
+	title: title,
+	line: line,
+	value: value
 });

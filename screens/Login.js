@@ -24,7 +24,7 @@ export default function LoginScreen({route, navigation}) {
 
 	return (
 		<View style={styles.container}>
-			{wrongPassword && <Text style={styles.warning}>Wrong username or password</Text>}
+			{wrongPassword && <Text style={styles.warningText}>Wrong username or password</Text>}
 			<TextInput
 				style={styles.input}
 				placeholder="Username"

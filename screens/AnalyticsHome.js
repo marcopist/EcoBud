@@ -1,18 +1,17 @@
 // Home.js
 import {
 	View,
-	Button,
 	StyleSheet,
-	Linking,
 	FlatList,
 	TouchableWithoutFeedback,
 	Text
 } from "react-native";
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import config from "../config";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {useFocusEffect} from "@react-navigation/native";
 import {formatDate, formatNumber} from "../utils/Formatters";
+import {styles} from "../utils/Style";
 
 function getAnalytics(startDate, endDate, setAnalytics) {
 	const startDateStr = startDate.toISOString().substring(0, 10);
@@ -56,11 +55,10 @@ export default function AnalyticsHomeScreen({route, navigation}) {
 		<TouchableWithoutFeedback
 			onPress={() => handleOnTransactionPressed(navigation, item.transaction.id)}
 		>
-			<View style={styles.tableRow}>
-				<Text style={styles.cell.description}>{item.transaction.description.user}</Text>
-				<Text style={styles.cell.date}>{formatDate(item.transaction.date)}</Text>
-				<Text style={styles.cell.amount}>
-					{" "}
+			<View style={styles.tableTransactions.row}>
+				<Text style={styles.tableTransactions.cell.description}>{item.transaction.description.user}</Text>
+				<Text style={styles.tableTransactions.cell.date}>{formatDate(item.transaction.date)}</Text>
+				<Text style={styles.tableTransactions.cell.amount}>
 					{formatNumber(item.outputData.periodCost)} {item.transaction.currency}
 				</Text>
 			</View>
@@ -69,7 +67,7 @@ export default function AnalyticsHomeScreen({route, navigation}) {
 
 	if (!loaded) {
 		return (
-			<View style={styles.container}>
+			<View style={stylesLocal.container}>
 				<Text>Loading...</Text>
 			</View>
 		);
@@ -77,8 +75,8 @@ export default function AnalyticsHomeScreen({route, navigation}) {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.mainRow}>
-				<View style={styles.topRow}>
+			<View style={styles.line}>
+				<View style={{...stylesLocal.line}}>
 					<Text>Start:</Text>
 					<DateTimePicker
 						value={startDate}
@@ -89,7 +87,7 @@ export default function AnalyticsHomeScreen({route, navigation}) {
 						}}
 					/>
 				</View>
-				<View style={styles.topRow}>
+				<View style={{...stylesLocal.line}}>
 					<Text>End:</Text>
 					<DateTimePicker
 						value={endDate}
@@ -101,21 +99,21 @@ export default function AnalyticsHomeScreen({route, navigation}) {
 					/>
 				</View>
 			</View>
-			<View style={styles.mainRow}>
+			<View style={stylesLocal.mainRow}>
 				<Text>Income:</Text>
-				<Text style={styles.periodCost}>{formatNumber(analytics.periodCost)}</Text>
+				<Text style={stylesLocal.periodCost}>{formatNumber(analytics.periodCost)}</Text>
 			</View>
 			<FlatList
-				contentContainerStyle={styles.table}
+				contentContainerStyle={stylesLocal.table}
 				data={analytics.transactions}
 				renderItem={renderItem}
-				keyExtractor={item => item.transaction.id.toString()}
+				keyExtractor={item => item.transaction._id.toString()}
 			/>
 		</View>
 	);
 }
 
-const styles = StyleSheet.create({
+const stylesLocal = StyleSheet.create({
 	mainRow: {
 		flexDirection: "row",
 		alignItems: "center",

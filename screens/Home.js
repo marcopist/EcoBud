@@ -3,17 +3,11 @@ import {View, Button, StyleSheet, Linking, TouchableOpacity, Text} from "react-n
 import config from "../config";
 import AuthContext from "../utils/AuthContext";
 import React, {useContext} from "react";
-import {blue} from "../utils/Style";
 import {styles} from "../utils/Style";
+import {getBankLink, logout} from "../utils/Api";
 
 function handleBankLink() {
-	url = config.baseUrl + "/bank/link";
-	fetch(url, {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json"
-		}
-	}).then(response => {
+	getBankLink().then(response => {
 		if (response.status == 200) {
 			response.json().then(data => {
 				console.log(data.url);
@@ -26,13 +20,7 @@ function handleBankLink() {
 }
 
 function handleLogOut(setLoggedIn) {
-	url = config.baseUrl + "/logout";
-	fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		}
-	}).then(response => {
+	logout().then(response => {
 		console.log(response.status);
 		if (response.status == 200) {
 			console.log("Logged out");
