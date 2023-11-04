@@ -16,8 +16,29 @@ transactionsSingleContainer = {
     ...container,
     flex: 0,
     justifyContent: "flex-start",
-    padding: 10, // Add some padding
+    padding: 10,
 }
+
+datePickerContainer = {
+	...container,
+	flex: 1,
+	justifyContent: "flex-start",
+	padding: 10,
+	flexDirection: "row",
+	alignItems: "center",
+
+}
+
+settingsContainer = {
+	...container,
+	flex: 0,
+	padding: 10,
+	flexDirection: "row",
+	alignItems: "center",
+	justifyContent: "space-between"
+
+}
+
 input = {
     height: 40,
     width: "100%",
@@ -25,7 +46,7 @@ input = {
     borderWidth: 0.5,
     marginBottom: 20,
     paddingHorizontal: 10,
-    borderRadius: 10, // Increase borderRadius
+    borderRadius: 10,
     padding: 10
 };
 
@@ -139,5 +160,7 @@ export const styles = StyleSheet.create({
 	textInput: text,
 	title: title,
 	line: line,
-	value: value
+	value: value,
+	datePickerContainer: datePickerContainer,
+	settingsContainer: settingsContainer,
 });
